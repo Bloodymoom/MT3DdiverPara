@@ -2,6 +2,7 @@
 #define V0ASSEMBLY_H
 #include <petscmat.h>
 
+// Global impedance matrix structure, storing matrix data
 typedef struct v0AsEm 
 {
     // K11
@@ -31,8 +32,11 @@ typedef struct v0AsEm
 }v0AsEm;
 
 void getP_xyz(v0AsEm *v0Ae);
+// Initialize KE matrix
 void initK2eMat(v0AsEm *v0Ae);
+// Finite element computation to obtain the global impedance matrix
 void v0_FE(double freq, Fmodel *fm, v0AsEm *v0Ae, MPI_Comm curComm);
+// Free data
 void freev0Ae(v0AsEm *v0Ae);
 void freeK1K2(v0AsEm *v0Ae);
 

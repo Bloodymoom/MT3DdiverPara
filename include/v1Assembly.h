@@ -3,6 +3,7 @@
 #include <petscmat.h>
 #include <petscksp.h>
 
+// Store global impedance matrix data and solution results for Source A
 typedef struct v1AsEm
 {
     PetscScalar *Exx1, *Eyy1, *Ezz1;
@@ -16,6 +17,7 @@ typedef struct v1AsEm
     Mat v1;
 } v1AsEm;
 
+// Parallel Solve for Source A
 void v1_Solve(v0AsEm *v0Ae, v1AsEm *v1Ae, Divcorre *div, Fmodel *fm, double freq, MPI_Comm curComm);
 void freev1Ae(v1AsEm *v1Ae, MPI_Comm curComm);
 
