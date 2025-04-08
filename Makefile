@@ -13,7 +13,7 @@ SRC := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRC))
 
 # 可执行文件名称
-TARGET := main
+TARGET := MT3DdiverPara
 
 # 默认目标
 all: $(TARGET)
