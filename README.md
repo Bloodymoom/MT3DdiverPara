@@ -1,3 +1,4 @@
+![fig2](https://github.com/user-attachments/assets/1d642b20-8825-49f1-a228-122eea610f3e)
 
 
 # Description
