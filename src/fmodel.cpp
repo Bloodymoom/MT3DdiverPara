@@ -198,10 +198,10 @@ void init_Fmodel(Fmodel *fm, double freq)
         for (M = 0; M < y; M++)
             for (N = 0; N < x; N++)
             {
-                // 索引中间变量
+                // Index intermediate variables
                 IL = L * (x * (y + 1) + y * (x + 1) + (x + 1) * (y + 1));
                 col_index = L * x * y + M * x + N;
-                // 为ME矩阵的每一行元素设置索引值
+                // Set index values for each row element of the ME matrix
                 fm->ME[0 * fm->NE + col_index] = IL + M * (2 * x + 1) + N;
                 fm->ME[1 * fm->NE + col_index] = IL + M * (2 * x + 1) + N + 2 * x + 1;
                 fm->ME[2 * fm->NE + col_index] = IL + M * (2 * x + 1) + N + x * (y + 1) + y * (x + 1) + (x + 1) * (y + 1);

@@ -10,23 +10,25 @@ void edgeTonode(Fmodel *fm)
     int k, j, i;
     int IL, IN1, IN2;
 
-    // 对Ex方向的边线进行循环
+    // Loop over edges in the Ex direction
     for (k = 0; k < NZ + 1; k++)
         for (j = 0; j < NY + 1; j++)
             for (i = 0; i < NX; i++)
             {
-                // 计算边索引IL
+                // Compute edge index IL
                 IL = k * (NX * (NY + 1) + (NX + 1) * NY + (NX + 1) * (NY + 1)) + j * (2 * NX + 1) + i;
-                // 根据网格定位计算对应两个节点索引IN1、IN2
+                // Calculate corresponding two node indices IN1 and IN2 
+                // based on grid positioning
                 IN1 = k * (NX + 1) * (NY + 1) + j * (NX + 1) + i;
                 IN2 = k * (NX + 1) * (NY + 1) + j * (NX + 1) + i + 1;
-                // 将节点索引和边长A_X填入EtoN相应位置
+                // Fill the corresponding positions in EtoN 
+                // with node indices and edge length A_X
                 fm->EtoN[IL * 3 + 0] = IN1;
                 fm->EtoN[IL * 3 + 1] = IN2;
                 fm->EtoN[IL * 3 + 2] = fm->A_X[i];
             }
 
-    // 对Ey方向进行边线循环
+    // Loop over edges in the Ey direction
     for (k = 0; k < NZ + 1; k++)
         for (j = 0; j < NY; j++)
             for (i = 0; i < NX + 1; i++)
@@ -34,13 +36,14 @@ void edgeTonode(Fmodel *fm)
                 IL = k * (NX * (NY + 1) + (NX + 1) * NY + (NX + 1) * (NY + 1)) + j * (2 * NX + 1) + NX + i;
                 IN1 = k * (NX + 1) * (NY + 1) + j * (NX + 1) + i;
                 IN2 = k * (NX + 1) * (NY + 1) + j * (NX + 1) + i + NX + 1;
-                // 将节点索引和边长B_Y填入EtoN相应位置
+                // Fill the corresponding positions in EtoN 
+                // with node indices and edge length B_Y
                 fm->EtoN[IL * 3 + 0] = IN1;
                 fm->EtoN[IL * 3 + 1] = IN2;
                 fm->EtoN[IL * 3 + 2] = fm->B_Y[j];
             }
 
-    // 对Ez方向进行边线循环
+    // Loop over edges in the Ez direction
     for (k = 0; k < NZ; k++)
         for (j = 0; j < NY + 1; j++)
             for (i = 0; i < NX + 1; i++)
@@ -48,7 +51,8 @@ void edgeTonode(Fmodel *fm)
                 IL = k * (NX * (NY + 1) + (NX + 1) * NY + (NX + 1) * (NY + 1)) + NX * (NY + 1) + NY * (NX + 1) + j * (NX + 1) + i;
                 IN1 = k * (NX + 1) * (NY + 1) + j * (NX + 1) + i;
                 IN2 = k * (NX + 1) * (NY + 1) + j * (NX + 1) + i + (NX + 1) * (NY + 1);
-                // 将节点索引和边长C_Z填入EtoN相应位置
+                // Fill the corresponding positions in EtoN 
+                // with node indices and edge length C_Z
                 fm->EtoN[IL * 3 + 0] = IN1;
                 fm->EtoN[IL * 3 + 1] = IN2;
                 fm->EtoN[IL * 3 + 2] = fm->C_Z[k];
@@ -74,7 +78,7 @@ FILE *readModelFile(char *filename, double freq, int isloadB, Fmodel *fm)
     file = fopen(prefix, "rb");
     if (file == NULL)
     {
-        printf("无法打开文件 %s\n", prefix);
+        printf("Can not open file %s\n", prefix);
         return NULL;
     }
 
@@ -205,41 +209,6 @@ void fDirBdaries(v1AsEm *v1Ae, v2AsEm *v2Ae, double freq, int polarization, Fmod
 
             v1Ae->EzA[i] = fDval;
         }
-        // file_r.open(prefix + std::string("/P2RHx.dat"));
-        // file_i.open(prefix + std::string("/P2IHx.dat"));
-
-        // count = 0;
-        // while (std::getline(file_r, line_r) && std::getline(file_i, line_i))
-        // {
-        //     fDval.real(std::stod(line_r));
-        //     fDval.imag(std::stod(line_i));
-
-        //     v1Ae->HxA[count++] = fDval;
-        // }
-
-        // file_r.close();
-        // file_i.close();
-
-        // file_r.open(prefix + std::string("/P2RHy.dat"));
-        // file_i.open(prefix + std::string("/P2IHy.dat"));
-
-        // count = 0;
-        // while (std::getline(file_r, line_r) && std::getline(file_i, line_i))
-        // {
-        //     fDval.real(std::stod(line_r));
-        //     fDval.imag(std::stod(line_i));
-
-        //     v1Ae->HyA[count++] = fDval;
-        // }
-
-        // file_r.close();
-        // file_i.close();
-
-        // for (int i = 0; i < NZ + 1; i++)
-        //     v1Ae->HzA[i] = 0.0;
-
-        // v1Ae->rho_a1 = std::pow((std::abs(v1Ae->EyA[Nair + Nsea] / v1Ae->HxA[0])), 2) / w / mu0;
-        // v1Ae->rho_a2 = std::pow((std::abs(v1Ae->ExA[Nair + Nsea] / v1Ae->HyA[0])), 2) / w / mu0;
     }
     else if (polarization == 2)
     {
@@ -284,7 +253,7 @@ void fDirBdaries(v1AsEm *v1Ae, v2AsEm *v2Ae, double freq, int polarization, Fmod
     }
 }
 
-// 自定义监视器函数
+// Custom monitor function
 PetscErrorCode MyKSPMonitor_xy(KSP ksp, PetscInt n, PetscReal rnorm, void *ctx)
 {
     PetscReal relres;
@@ -301,15 +270,15 @@ PetscErrorCode MyKSPMonitor_xy(KSP ksp, PetscInt n, PetscReal rnorm, void *ctx)
     // file << n << " " << relres << "\n";
     // file.close();
     if (relres < context->rtol) {
-        PetscPrintf(PETSC_COMM_WORLD, "相对残差 %g 小于容差 %g\n", relres, context->rtol);
+        PetscPrintf(PETSC_COMM_WORLD, "Relative residual %g less than the tolerance %g\n", relres, context->rtol);
 
-        // KSPConvergedReasonSet(ksp, KSP_CONVERGED_RTOL);  // 可选：设置收敛标志
-        return 1;  // 强制终止迭代
+        // KSPConvergedReasonSet(ksp, KSP_CONVERGED_RTOL);
+        return 1;  // Force iteration termination
     }
     return 0;
 }
 
-// 自定义监视器函数
+// Custom monitor function
 PetscErrorCode MyKSPMonitor_yx(KSP ksp, PetscInt n, PetscReal rnorm, void *ctx)
 {
     PetscReal relres;
@@ -326,10 +295,10 @@ PetscErrorCode MyKSPMonitor_yx(KSP ksp, PetscInt n, PetscReal rnorm, void *ctx)
     file << n << " " << relres << "\n";
     file.close();
     if (relres < context->rtol) {
-        PetscPrintf(PETSC_COMM_WORLD, "相对残差 %g 小于容差 %g\n", relres, context->rtol);
+        PetscPrintf(PETSC_COMM_WORLD, "Relative residual %g less than the tolerance %g\n", relres, context->rtol);
 
-        // KSPConvergedReasonSet(ksp, KSP_CONVERGED_RTOL);  // 可选：设置收敛标志
-        return 1;  // 强制终止迭代
+        // KSPConvergedReasonSet(ksp, KSP_CONVERGED_RTOL);
+        return 1;  // Force iteration termination
     }
     return 0;
 }
@@ -387,6 +356,8 @@ void rhoAndpha(v1AsEm *v1Ae, v2AsEm *v2Ae, Fmodel *fm, double freq, MPI_Comm cur
             }
         }
 
+        // Output the central result values of the geoelectric model 
+        // to verify algorithm effectiveness 
         int midx = floor(NX / 2), midy = floor(NY / 2);
         PetscPrintf(curComm, "PhaseXX mid: %g\n", PhaseXX[midx][midy]);
         PetscPrintf(curComm, "PhaseXY mid: %g\n", PhaseXY[midx][midy]);

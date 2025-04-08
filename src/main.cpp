@@ -54,10 +54,10 @@ int main(int argc, char **args)
 
     PetscTime(&total_st);
 
-    // 划分子域
+    // Subdomain partitioning
     MPI_Comm_size(PETSC_COMM_WORLD, &N_PROC);
     MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
-    MPI_FRE = (int)freqs[FRE_NUM]; // 每个子域处理频率数据个数
+    MPI_FRE = (int)freqs[FRE_NUM]; // Number of frequency data processed per subdomain
     if (N_PROC == 1)
     {
         MPI_FRE = FRE_NUM;
@@ -102,18 +102,18 @@ int main(int argc, char **args)
     for (fnn = f_start; fnn < f_end; fnn++)
     {
         PetscTime(&st2);
-        PetscPrintf(curComm, "第%d个频点: %f\n", fnn + 1, freqs[fnn]);
+        PetscPrintf(curComm, "The %d frequency: %f\n", fnn + 1, freqs[fnn]);
         v0_FE(freqs[fnn], fm, v0Ae, curComm);
         v1_Solve(v0Ae, v1Ae, div, fm, freqs[fnn], curComm);
-        // v2_Solve(v0Ae, v2Ae, div, fm, freqs[fnn], curComm);
-        // rhoAndpha(v1Ae, v2Ae, fm, freqs[fnn], curComm);
+        v2_Solve(v0Ae, v2Ae, div, fm, freqs[fnn], curComm);
+        rhoAndpha(v1Ae, v2Ae, fm, freqs[fnn], curComm);
         PetscTime(&ed2);
         total2 = ed2 - st2;
-        PetscPrintf(curComm, "第%d个频点 time: %.5lfs\n", fnn + 1, total2);
+        PetscPrintf(curComm, "The %d frequency time: %.5lfs\n", fnn + 1, total2);
 
         freev0Ae(v0Ae);
         freev1Ae(v1Ae, curComm);
-        // freev2Ae(v2Ae, curComm);
+        freev2Ae(v2Ae, curComm);
     }
 
     MPI_Barrier(PETSC_COMM_WORLD);

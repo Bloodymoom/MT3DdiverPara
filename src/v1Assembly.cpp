@@ -171,10 +171,10 @@ void v1_Solve(v0AsEm *v0Ae, v1AsEm *v1Ae, Divcorre *div, Fmodel *fm, double freq
 
     idn7 = idn;
     PetscPrintf(PETSC_COMM_WORLD, "A Bid(%d)\n", idn7);
-    PetscPrintf(PETSC_COMM_WORLD, "第一类边界棱边总数: %d\n", idn7);
+    PetscPrintf(PETSC_COMM_WORLD, "Total number of type 1 boundary edges: %d\n", idn7);
     PetscPrintf(PETSC_COMM_WORLD, "A 2\n");
 
-    // 设置边界条件
+    // Load boundary field values
     idn = 0;
     for (i = 0; i < idn1; i++)
     {
@@ -235,7 +235,7 @@ void v1_Solve(v0AsEm *v0Ae, v1AsEm *v1Ae, Divcorre *div, Fmodel *fm, double freq
     PetscPrintf(PETSC_COMM_WORLD, "A change v\n");
     PetscPrintf(PETSC_COMM_WORLD, "A 6\n");
 
-    // 计算表面节点号
+    // Calculate surface node numbers
     int IDNphi = 0;
     Bidphi = (int *)malloc(sizeof(int));
     for (k = 0; k < NZ + 1; k++)
@@ -253,7 +253,7 @@ void v1_Solve(v0AsEm *v0Ae, v1AsEm *v1Ae, Divcorre *div, Fmodel *fm, double freq
         }
     }
 
-    // 加入外边界
+    // Add outer boundary
     slice = floor(IDNphi / curSize);
     st_idx = curRank * slice;
     ed_idx = (curRank != curSize - 1) ? (curRank + 1) * slice : IDNphi;
@@ -297,7 +297,7 @@ void v1_Solve(v0AsEm *v0Ae, v1AsEm *v1Ae, Divcorre *div, Fmodel *fm, double freq
     VecGetLocalSize(Xe, &slice);
     st_idx = (curRank != curSize - 1) ? curRank * slice : NL - slice;
     ed_idx = (curRank != curSize - 1) ? (curRank + 1) * slice : NL;
-    // 节点元、边索引映射
+    // Node element and edge index mapping
     PetscInt *nodes1, *nodes2, len = 0;
     nodes1 = (PetscInt *)malloc(sizeof(PetscInt) * slice);
     nodes2 = (PetscInt *)malloc(sizeof(PetscInt) * slice);
@@ -359,14 +359,14 @@ void v1_Solve(v0AsEm *v0Ae, v1AsEm *v1Ae, Divcorre *div, Fmodel *fm, double freq
     context.bnorm = bnorm;
     int total_iters = 2000;
     its = (int)ceil((double)total_iters / maxsteps);
-    // context.minRelativeResidual = PETSC_INFINITY; // 初始化为无穷大
+    // context.minRelativeResidual = PETSC_INFINITY; // Initialize to infinity
     // KSPMonitorSet(ksp_x1, MyKSPMonitor_xy, &context, NULL);
     // KSPSolve(ksp_x1, P, Xe);
     for (iters = 0; iters < its; iters++)
     {
         KSPSetInitialGuessNonzero(ksp_x1, PETSC_TRUE);
         // Moniter
-        context.minRelativeResidual = PETSC_INFINITY; // 初始化为无穷大
+        context.minRelativeResidual = PETSC_INFINITY; // Initialize to infinity
         KSPMonitorSet(ksp_x1, MyKSPMonitor_xy, &context, NULL);
         KSPSolve(ksp_x1, P, Xe);
 
@@ -375,11 +375,11 @@ void v1_Solve(v0AsEm *v0Ae, v1AsEm *v1Ae, Divcorre *div, Fmodel *fm, double freq
 
         if (rnorm < tol)
         {
-            PetscPrintf(curComm, "相对残差 %g 小于容差 %g\n", rnorm, tol);
+            PetscPrintf(curComm, "Relative residual %g less than the tolerance %g\n", rnorm, tol);
             break;
         }
         else
-            PetscPrintf(curComm, "相对残差为: %g\n", rnorm);
+            PetscPrintf(curComm, "Relative residual: %g\n", rnorm);
 
         // tvE = tv*Xe
         MatMult(div->tv, Xe, tvE);
@@ -423,9 +423,9 @@ void v1_Solve(v0AsEm *v0Ae, v1AsEm *v1Ae, Divcorre *div, Fmodel *fm, double freq
     PetscInt *recive_size = (PetscInt *)malloc(sizeof(PetscInt) * curSize), displs[curSize];
     PetscScalar *XeVal = (PetscScalar *)malloc(sizeof(PetscScalar) * NL);
 
-    // 收集每个进程的数据大小 size
+    // Collect data size for each process
     MPI_Gather(&Xe_s, 1, MPIU_INT, recive_size, 1, MPIU_INT, 0, curComm);
-    // 计算偏移量
+    // Calculate offset values
     if (!curRank)
     {
         displs[0] = 0;
@@ -433,7 +433,7 @@ void v1_Solve(v0AsEm *v0Ae, v1AsEm *v1Ae, Divcorre *div, Fmodel *fm, double freq
             displs[i] = displs[i - 1] + recive_size[i - 1];
     }
 
-    // 根据偏移量收集每个进程的Xe数据到0号进程
+    // Gather Xe data from each process to process 0 based on offset values
     MPI_Gatherv(Xe_a, Xe_s, MPIU_SCALAR, XeVal, recive_size, displs, MPIU_SCALAR, 0, curComm);
     free(recive_size);
     VecRestoreArray(Xe, &Xe_a);
@@ -485,10 +485,6 @@ void v1_Solve(v0AsEm *v0Ae, v1AsEm *v1Ae, Divcorre *div, Fmodel *fm, double freq
                 }
             }
         }
-        std::ofstream fout("res/div-sourceA-45.txt");
-        for (i=0; i<NY; i++)
-            fout << Ey1[33][i][50].real() << ", ";
-        fout.close();
 
         for (i = 0; i < NX; i++)
         {
@@ -631,9 +627,6 @@ void freev1Ae(v1AsEm *v1Ae, MPI_Comm curComm)
     free(v1Ae->ExA);
     free(v1Ae->EyA);
     free(v1Ae->EzA);
-    // free(v1Ae->HxA);
-    // free(v1Ae->HyA);
-    // free(v1Ae->HzA);
     int curRank;
     MPI_Comm_rank(curComm, &curRank);
     if (curRank == 0)

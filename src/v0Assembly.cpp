@@ -213,6 +213,7 @@ void initK2eMat(v0AsEm *v0Ae)
     memcpy(v0Ae->k2ezz, tmp_K2ezz, 4 * 4 * sizeof(double));
 }
 
+// Finite element analysis to generate the global impedance matrix
 void v0_FE(double freq, Fmodel *fm, v0AsEm *v0Ae, MPI_Comm curComm)
 {
     int NX, NY, NE, NL;
@@ -336,6 +337,7 @@ void v0_FE(double freq, Fmodel *fm, v0AsEm *v0Ae, MPI_Comm curComm)
         memset(k1ezy, 0, 4 * 4 * sizeof(double));
         memset(k1ezz, 0, 4 * 4 * sizeof(double));
 
+        // Compute anisotropic conductivity and permeability tensors
         r_1 = fm->rho[h * 3 + 0];
         r_2 = fm->rho[h * 3 + 1];
         r_3 = fm->rho[h * 3 + 2];
@@ -600,6 +602,7 @@ void v0_FE(double freq, Fmodel *fm, v0AsEm *v0Ae, MPI_Comm curComm)
         cblas_dscal(4 * 4, sig_zy * prefixVal * a * b * c / 24, v0Ae->k2ezy, 1);
         cblas_dscal(4 * 4, sig_zz * prefixVal * a * b * c / 36, v0Ae->k2ezz, 1);
 
+        // Global impedance matrix assembly
         mergeKmat(K2e, v0Ae->k2exx, v0Ae->k2exy, v0Ae->k2exz,
                   v0Ae->k2eyx, v0Ae->k2eyy, v0Ae->k2eyz,
                   v0Ae->k2ezx, v0Ae->k2ezy, v0Ae->k2ezz);
