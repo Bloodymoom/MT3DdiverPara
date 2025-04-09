@@ -32,4 +32,4 @@ max_its = 50     # maximum number of iterations for divergence
 The model data parameters are stored in the `model_data` directory. The program reads the corresponding model parameters from the `model.dat`, while the `freqs.txt` contains the frequency values to be processed and the number of frequencies assigned to each sub-communication domain. These two files, `model.dat` and `freqs.txt`, respectively control the model parameters and the number of frequencies to be processed by the program. By modifying these files, one can control the input of model parameters and frequency data.
 
 # License
-MT3DdiverPara is licensed under the MIT [Lincense](./LICENSE).
+MT3DdiverPara is licensed under the [MIT License](./LICENSE).
