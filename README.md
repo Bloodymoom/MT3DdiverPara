@@ -8,12 +8,12 @@
 
 # Requirements
 ```
-mpich 3.4.2<br>
-PETSc 3.22.0<br>
-superlu_dist 8.0.0<br>
-parmetis 4.0.3<br>
-metis 5.1.0<br>
-lapack 3.8.0<br>
+mpich 3.4.2
+PETSc 3.22.0
+superlu_dist 8.0.0
+parmetis 4.0.3
+metis 5.1.0
+lapack 3.8.0
 openblas 0.3.29
 ```
 
