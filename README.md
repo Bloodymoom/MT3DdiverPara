@@ -18,6 +18,6 @@ openblas 0.3.29
 ```
 
 # run code
-$ mpirun -np 4 ./main -ksp_rtol 1e-10 -max_its 50
+`mpirun -np 4 ./main -ksp_rtol 1e-10 -max_its 50`
 
 # important parameters
