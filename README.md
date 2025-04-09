@@ -17,7 +17,16 @@ lapack 3.8.0
 openblas 0.3.29
 ```
 
+Before running the program, it is necessary to install all the aforementioned dependency libraries. The versions of these libraries should not be arbitrarily changed to avoid potential conflicts. The `PETSc` library must be installed **after** all other dependencies, so please pay close attention to the installation order. Once all dependencies are successfully installed, the program can be compiled using the `make` command. After compilation is complete, the program can be executed using the `mpirun` command to generate the results.
+
 # run code
 `mpirun -np 4 ./main -ksp_rtol 1e-10 -max_its 50`
 
 # important parameters
+```
+np = 4           # number of process
+ksp_rtol = 1e-10 # relative tolerance of iterative solver
+max_its = 50     # maximum number of iterations for divergence
+```
+
+The model data parameters are stored in the `model_data` directory. The program reads the corresponding model parameters from the `model.dat`, while the `freqs.txt` contains the frequency values to be processed and the number of frequencies assigned to each sub-communication domain. These two files, `model.dat` and `freqs.txt`, respectively control the model parameters and the number of frequencies to be processed by the program. By modifying these files, one can control the input of model parameters and frequency data.
